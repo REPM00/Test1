@@ -700,5 +700,136 @@
   </div>
 </footer>
 
+<!-- ============================================================
+     WIDGET DE CHAT — asistente de Milpa con Gemini
+     Pega TODO este bloque justo antes de </body> en tu index.html.
+     Requiere que exista api/chat.js en tu repo y la variable de
+     entorno GEMINI_API_KEY configurada en Vercel (ver instrucciones).
+     ============================================================ -->
+<style>
+  #mp-chat-launch {
+    position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 9999;
+    background: #E8A23D; color: #1C1321; border: none; border-radius: 999px;
+    padding: 14px 20px; font-family: "Inter", sans-serif; font-weight: 600; font-size: 0.9rem;
+    display: flex; align-items: center; gap: 9px; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  }
+  #mp-chat-launch svg { width: 18px; height: 18px; }
+  #mp-chat-launch.hidden { display: none; }
+  #mp-chat-panel {
+    position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 9999;
+    width: min(360px, calc(100vw - 40px)); height: min(520px, calc(100vh - 100px));
+    background: #1C1321; border: 1px solid #3E2C45; border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+    display: none; flex-direction: column; overflow: hidden; font-family: "Inter", sans-serif;
+  }
+  #mp-chat-panel.open { display: flex; }
+  .mp-chat-head { background: #E8A23D; color: #1C1321; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .mp-chat-head .mp-title { font-weight: 700; font-size: 1.02rem; }
+  .mp-chat-head .mp-sub { font-size: 0.72rem; opacity: 0.8; }
+  .mp-chat-close { background: none; border: none; color: #1C1321; font-size: 1.3rem; cursor: pointer; line-height: 1; }
+  #mp-chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #241627; }
+  .mp-bubble { max-width: 84%; padding: 10px 13px; border-radius: 12px; font-size: 0.88rem; line-height: 1.5; white-space: pre-wrap; }
+  .mp-bubble.user { align-self: flex-end; background: #E8A23D; color: #1C1321; border-bottom-right-radius: 3px; }
+  .mp-bubble.bot { align-self: flex-start; background: #2D1D34; color: #F4ECDD; border: 1px solid #3E2C45; border-bottom-left-radius: 3px; }
+  .mp-bubble.bot.thinking { opacity: 0.7; font-style: italic; }
+  .mp-bubble.bot.error { border-color: #C4502E; color: #E8A99B; }
+  .mp-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 10px; background: #241627; }
+  .mp-chip { background: #2D1D34; border: 1px solid #3E2C45; border-radius: 999px; padding: 6px 11px; font-size: 0.76rem; cursor: pointer; color: #F4ECDD; }
+  #mp-chat-input-row { display: flex; gap: 8px; padding: 12px; border-top: 1px solid #3E2C45; background: #1C1321; }
+  #mp-chat-input-row input { flex: 1; border: 1px solid #3E2C45; border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; background: #2D1D34; color: #F4ECDD; font-family: inherit; }
+  #mp-chat-send { background: #E8A23D; color: #1C1321; border: none; border-radius: 8px; padding: 0 16px; font-weight: 600; cursor: pointer; }
+  #mp-chat-send:disabled { opacity: 0.5; cursor: default; }
+</style>
+
+<button id="mp-chat-launch" type="button">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  ¿Preguntas sobre Milpa?
+</button>
+
+<div id="mp-chat-panel" role="dialog" aria-label="Asistente de Milpa">
+  <div class="mp-chat-head">
+    <div><div class="mp-title">Asistente de Milpa</div><div class="mp-sub">Responde con IA (Gemini)</div></div>
+    <button class="mp-chat-close" id="mp-chat-close" type="button" aria-label="Cerrar">×</button>
+  </div>
+  <div id="mp-chat-body"></div>
+  <div class="mp-chips" id="mp-chat-chips">
+    <button class="mp-chip" data-q="¿Qué platillos recomiendan?">Recomendación</button>
+    <button class="mp-chip" data-q="¿Cuál es el horario?">Horario</button>
+    <button class="mp-chip" data-q="¿Dónde están ubicados?">Ubicación</button>
+  </div>
+  <div id="mp-chat-input-row">
+    <input id="mp-chat-input" type="text" placeholder="Escribe tu pregunta..." autocomplete="off">
+    <button id="mp-chat-send" type="button">Enviar</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var turns = [];
+  var pending = false;
+  var launchBtn = document.getElementById('mp-chat-launch');
+  var panel = document.getElementById('mp-chat-panel');
+  var body = document.getElementById('mp-chat-body');
+  var input = document.getElementById('mp-chat-input');
+  var sendBtn = document.getElementById('mp-chat-send');
+
+  function addBubble(role, text, cls) {
+    var b = document.createElement('div');
+    b.className = 'mp-bubble ' + (role === 'user' ? 'user' : 'bot') + (cls ? ' ' + cls : '');
+    b.textContent = text;
+    body.appendChild(b);
+    body.scrollTop = body.scrollHeight;
+    return b;
+  }
+
+  async function send(text) {
+    if (pending || !text.trim()) return;
+    pending = true; sendBtn.disabled = true;
+    addBubble('user', text);
+    turns.push({ role: 'user', content: text });
+    input.value = '';
+    var thinking = addBubble('bot', 'Pensando...', 'thinking');
+
+    try {
+      var resp = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: turns }),
+      });
+      var data = await resp.json();
+      thinking.classList.remove('thinking');
+      if (!resp.ok) {
+        thinking.classList.add('error');
+        thinking.textContent = data.error || 'No pude responder en este momento.';
+      } else {
+        thinking.textContent = data.text;
+        turns.push({ role: 'assistant', content: data.text });
+      }
+    } catch (e) {
+      thinking.classList.remove('thinking');
+      thinking.classList.add('error');
+      thinking.textContent = 'No se pudo conectar con el asistente.';
+    } finally {
+      pending = false; sendBtn.disabled = false;
+    }
+  }
+
+  sendBtn.addEventListener('click', function () { send(input.value); });
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(input.value); });
+  document.getElementById('mp-chat-chips').addEventListener('click', function (e) {
+    var q = e.target.getAttribute('data-q');
+    if (q) send(q);
+  });
+  document.getElementById('mp-chat-close').addEventListener('click', function () {
+    panel.classList.remove('open'); launchBtn.classList.remove('hidden');
+  });
+  launchBtn.addEventListener('click', function () {
+    panel.classList.add('open'); launchBtn.classList.add('hidden'); input.focus();
+  });
+
+  addBubble('bot', 'Hola, soy el asistente de Milpa. Pregúntame sobre el menú, precios, horarios o ubicación.');
+})();
+</script>
+
 </body>
 </html>
