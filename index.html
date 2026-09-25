@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Milpa — Cocina mexicana regional de barrio</title>
+<meta name="description" content="Milpa es un restaurante de cocina mexicana regional de barrio: maíz nixtamalizado, recetas de casa y mesa todos los días.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noche: #160e1a;
+    --panel: #221627;
+    --panel-2: #2d1d34;
+    --panel-card: #2a1b31;
+    --masa: #F4ECDD;
+    --masa-dim: #C9BDB8;
+    --marigold: #E8A23D;
+    --jade: #5C8A6C;
+    --chile: #C4502E;
+    --line: #3E2C45;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  html { scroll-padding-top: calc(74px + env(safe-area-inset-top, 0px)); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--noche);
+    color: var(--masa);
+    font-family: "Inter", -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4, .display { font-family: "Bricolage Grotesque", ui-sans-serif, sans-serif; font-weight: 700; letter-spacing: -0.01em; color: var(--masa); }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  ::selection { background: var(--marigold); color: var(--noche); }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--marigold); outline-offset: 3px; }
+
+  /* ---- decorative zigzag divider, papel picado inspired ---- */
+  .picado {
+    height: 22px;
+    width: 100%;
+    background:
+      linear-gradient(135deg, var(--noche) 25%, transparent 25%) 0 0/22px 22px,
+      linear-gradient(225deg, var(--noche) 25%, transparent 25%) 0 0/22px 22px;
+    background-color: var(--marigold);
+    opacity: 0.9;
+  }
+
+  /* ---- header ---- */
+  header.site {
+    position: sticky; top: 0; z-index: 50;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: color-mix(in srgb, var(--noche) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .header-inner {
+    max-width: 1200px; margin: 0 auto; padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .logo { font-size: 1.45rem; font-weight: 800; text-decoration: none; display: flex; align-items: baseline; gap: 2px; }
+  .logo span { color: var(--marigold); }
+  .logo-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--masa-dim); margin-left: 8px; font-weight: 500; font-family: "Inter", sans-serif; }
+  nav.site-nav { display: flex; gap: 26px; font-size: 0.95rem; }
+  nav.site-nav a { text-decoration: none; color: var(--masa-dim); transition: color .15s; font-weight: 500; }
+  nav.site-nav a:hover { color: var(--marigold); }
+  .nav-cta {
+    background: var(--marigold); color: var(--noche); border: none; border-radius: 999px;
+    padding: 10px 22px; font-weight: 600; font-size: 0.92rem; cursor: pointer; text-decoration: none;
+    display: inline-block; transition: transform .15s, background .15s;
+  }
+  .nav-cta:hover { background: #F2B45C; transform: translateY(-1px); }
+
+  /* ---- banner de papel picado ---- */
+  .bunting { background: var(--noche); padding: 10px 0 0; overflow: hidden; }
+  .bunting-string { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; gap: 3px; justify-content: center; border-top: 1px solid var(--line); padding-top: 0; }
+  .flag {
+    width: 38px; height: 46px; flex: 0 0 auto; margin-top: -1px;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top center;
+    position: relative;
+  }
+  .flag::before, .flag::after {
+    content: ""; position: absolute; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--noche); top: 11px;
+  }
+  .flag::before { left: 9px; }
+  .flag::after { right: 9px; }
+  .flag span { position: absolute; left: 50%; top: 20px; width: 5px; height: 5px; border-radius: 50%; background: var(--noche); transform: translateX(-50%); }
+  .flag.c1 { background: var(--marigold); }
+  .flag.c2 { background: var(--jade); }
+  .flag.c3 { background: var(--chile); }
+  .flag.c4 { background: var(--masa); }
+  @media (prefers-reduced-motion: no-preference) {
+    .flag { animation: flutter 3.4s ease-in-out infinite; }
+    .flag:nth-child(odd) { animation-duration: 3s; }
+    .flag:nth-child(3n) { animation-delay: .3s; }
+    .flag:nth-child(4n) { animation-delay: .6s; animation-duration: 3.8s; }
+  }
+  @keyframes flutter { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+
+  /* ---- hero cinematográfico con imagen real ---- */
+  .hero-wrapper {
+    position: relative;
+    max-width: 1200px;
+    margin: 20px auto 60px;
+    padding: 0 24px;
+  }
+  .hero-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+  }
+  .hero-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(22, 14, 26, 0.95) 0%, rgba(22, 14, 26, 0.85) 48%, rgba(22, 14, 26, 0.3) 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 64px 48px;
+    max-width: 650px;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--marigold);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    background: rgba(232, 162, 61, 0.12);
+    border: 1px solid rgba(232, 162, 61, 0.25);
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--marigold); }
+  .hero h1 {
+    font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+    line-height: 1.02;
+    margin: 0 0 20px;
+    color: #fff;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+  }
+  .hero p.lead {
+    color: var(--masa);
+    font-size: 1.12rem;
+    line-height: 1.6;
+    margin: 0 0 32px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--marigold); color: var(--noche); border: none; border-radius: 999px;
+    padding: 13px 28px; font-weight: 600; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block;
+    transition: transform .15s, background .15s;
+  }
+  .btn-primary:hover { background: #F2B45C; transform: translateY(-2px); }
+  .btn-ghost {
+    background: rgba(22, 14, 26, 0.6); color: var(--masa); border: 1px solid rgba(244, 236, 221, 0.3); border-radius: 999px;
+    padding: 13px 28px; font-weight: 500; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block;
+    backdrop-filter: blur(8px); transition: border-color .15s, color .15s, background .15s;
+  }
+  .btn-ghost:hover { border-color: var(--marigold); color: var(--marigold); background: rgba(22, 14, 26, 0.85); }
+
+  @media (max-width: 860px) {
+    .hero-overlay {
+      background: linear-gradient(180deg, rgba(22, 14, 26, 0.92) 0%, rgba(22, 14, 26, 0.85) 60%, rgba(22, 14, 26, 0.6) 100%);
+    }
+    .hero-content { padding: 40px 24px; }
+  }
+
+  /* ---- sección nuestra cocina / comal ---- */
+  .cocina-section { max-width: 1200px; margin: 0 auto; padding: 70px 24px; }
+  .cocina-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .cocina-grid { grid-template-columns: 1fr; gap: 36px; }
+  }
+  .cocina-img-frame {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+  }
+  .cocina-img-frame img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .cocina-img-frame:hover img { transform: scale(1.02); }
+  .cocina-badge {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(22, 14, 26, 0.88);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    color: var(--masa);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cocina-badge b { color: var(--marigold); display: block; font-size: 0.95rem; }
+  .cocina-badge span { color: var(--masa-dim); font-size: 0.8rem; }
+  .cocina-badge .icon-flame { color: var(--chile); font-size: 1.3rem; }
+
+  .cocina-text h2 { font-size: clamp(2rem, 4vw, 2.9rem); line-height: 1.1; margin: 0 0 20px; }
+  .cocina-text p { color: var(--masa-dim); font-size: 1.05rem; margin-bottom: 20px; line-height: 1.7; }
+  .cocina-text strong { color: var(--masa); }
+  .stat-row { display: flex; gap: 36px; margin-top: 36px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 28px; }
+  .stat b { display: block; font-family: "Bricolage Grotesque", sans-serif; font-size: 2rem; color: var(--marigold); font-weight: 800; line-height: 1; margin-bottom: 6px; }
+  .stat span { color: var(--masa-dim); font-size: 0.88rem; }
+
+  /* ---- platillos destacados (galería fotográfica) ---- */
+  .platillos-section {
+    background: var(--panel);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 80px 24px;
+  }
+  .section-container { max-width: 1200px; margin: 0 auto; }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .section-head h2 { font-size: clamp(2rem, 4vw, 2.8rem); margin: 0 0 8px; }
+  .section-head p { color: var(--masa-dim); margin: 0; font-size: 1.05rem; max-width: 48ch; }
+  .platillos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 960px) { .platillos-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .platillos-grid { grid-template-columns: 1fr; } }
+
+  .dish-card {
+    background: var(--panel-card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .25s ease, border-color .25s ease;
+  }
+  .dish-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232, 162, 61, 0.4);
+  }
+  .dish-img-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--panel-2);
+  }
+  .dish-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+  }
+  .dish-card:hover .dish-img-wrap img { transform: scale(1.05); }
+  .dish-tag {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(22, 14, 26, 0.85);
+    color: var(--marigold);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 6px 14px;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(232, 162, 61, 0.3);
+  }
+  .dish-body {
+    padding: 22px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .dish-body h3 {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .dish-body p {
+    color: var(--masa-dim);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin: 0 0 16px;
+  }
+  .dish-origin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--jade);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .dish-origin::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--jade); }
+
+  /* ---- menú estilo comanda tradicional ---- */
+  .menu-list-section { max-width: 1200px; margin: 0 auto; padding: 76px 24px; }
+  .menu-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  @media (max-width: 760px) { .menu-cols { grid-template-columns: 1fr; gap: 20px; } }
+  .menu-cat { margin-bottom: 38px; }
+  .menu-cat h3 { font-size: 1.1rem; color: var(--jade); margin: 0 0 16px; font-weight: 600; letter-spacing: 0.02em; display: flex; align-items: center; gap: 8px; }
+  .menu-cat h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .dish-row { display: flex; align-items: baseline; gap: 10px; padding: 11px 0; border-bottom: 1px dotted var(--line); }
+  .dish-row .name { font-weight: 500; color: var(--masa); }
+  .dish-row .desc { display: block; color: var(--masa-dim); font-size: 0.86rem; margin-top: 3px; font-weight: 400; }
+  .dish-row .fill { flex: 1; border-bottom: 1px dotted var(--line); margin-bottom: 5px; min-width: 8px; }
+  .dish-row .price { color: var(--marigold); font-weight: 600; white-space: nowrap; }
+
+  /* ---- sección de ambiente & barrio ---- */
+  .ambiente-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+  .ambiente-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+    align-items: stretch;
+  }
+  @media (max-width: 860px) {
+    .ambiente-grid { grid-template-columns: 1fr; }
+  }
+  .ambiente-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .ambiente-card-img {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+  }
+  .ambiente-card-content {
+    padding: 30px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .ambiente-card-content h3 { font-size: 1.45rem; margin: 0 0 10px; color: var(--marigold); }
+  .ambiente-card-content p { color: var(--masa-dim); font-size: 0.98rem; line-height: 1.6; margin: 0; }
+
+  /* ---- horario / ubicacion ---- */
+  .info-section { background: var(--panel-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .info-inner { max-width: 1200px; margin: 0 auto; padding: 68px 24px; display: grid; grid-template-columns: 1.1fr 1fr 0.9fr; gap: 40px; }
+  @media (max-width: 860px) { .info-inner { grid-template-columns: 1fr; gap: 36px; } }
+  .info-block h3 { font-size: 1.2rem; margin: 0 0 16px; color: var(--marigold); display: flex; align-items: center; gap: 8px; }
+  .info-block p, .info-block address { color: var(--masa-dim); margin: 0 0 6px; font-style: normal; font-size: 0.96rem; line-height: 1.6; }
+  .hours-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 0.94rem; }
+  .hours-row span:first-child { color: var(--masa); font-weight: 500; }
+  .hours-row span:last-child { color: var(--marigold); }
+
+  /* ---- cta final ---- */
+  .cta-final { max-width: 1200px; margin: 0 auto; padding: 90px 24px; text-align: left; position: relative; }
+  .cta-box {
+    background: linear-gradient(135deg, var(--panel) 0%, #1f1225 100%);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 60px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-box h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); max-width: 18ch; margin: 0 0 16px; }
+  .cta-box p { color: var(--masa-dim); font-size: 1.1rem; max-width: 50ch; margin: 0 0 28px; }
+  .cta-final .actions { display: flex; gap: 14px; flex-wrap: wrap; position: relative; z-index: 2; }
+
+  footer.site { border-top: 1px solid var(--line); background: var(--noche); }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto; padding: 36px 24px calc(36px + env(safe-area-inset-bottom, 0px));
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--masa-dim); font-size: 0.88rem;
+  }
+  .footer-inner a { color: var(--masa-dim); text-decoration: none; transition: color .15s; }
+  .footer-inner a:hover { color: var(--marigold); }
+  .footer-links { display: flex; gap: 24px; }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="header-inner">
+    <a href="#" class="logo">Mil<span>pa</span><span class="logo-tag">Cocina de barrio</span></a>
+    <nav class="site-nav">
+      <a href="#historia">Nuestra cocina</a>
+      <a href="#platillos">Platillos</a>
+      <a href="#menu">Menú</a>
+      <a href="#ambiente">El restaurante</a>
+      <a href="#info">Horario y llegada</a>
+    </nav>
+    <a class="nav-cta" href="#reservar">Reservar mesa</a>
+  </div>
+</header>
+
+<div class="bunting" role="presentation" aria-hidden="true">
+  <div class="bunting-string">
+    <div class="flag c1"><span></span></div><div class="flag c2"><span></span></div><div class="flag c3"><span></span></div><div class="flag c4"><span></span></div>
+    <div class="flag c1"><span></span></div><div class="flag c2"><span></span></div><div class="flag c3"><span></span></div><div class="flag c4"><span></span></div>
+    <div class="flag c1"><span></span></div><div class="flag c2"><span></span></div><div class="flag c3"><span></span></div><div class="flag c4"><span></span></div>
+    <div class="flag c1"><span></span></div><div class="flag c2"><span></span></div><div class="flag c3"><span></span></div><div class="flag c4"><span></span></div>
+    <div class="flag c1"><span></span></div><div class="flag c2"><span></span></div><div class="flag c3"><span></span></div><div class="flag c4"><span></span></div>
+  </div>
+</div>
+
+<!-- Hero principal cinematográfico con foto real de banquete tradicional -->
+<div class="hero-wrapper">
+  <div class="hero-card">
+    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6zacCuIbu9upwfzQA5VP8EfxcRUCTGy18XOk2_fpuxD-Of9g5yRSosTrHpTH4j_Fp7Vl8Q8ufL3_NNepWYn4VC_QSr72rM45zroSQbtCSqLJdAjuJlxOwVWNk4OLgMpwVzzTC503R_c3tpfE9G5aD9dO6iiYrwj5pIelwDYvRxepwwaaALIXoNFP39FLcpp1MBvRgdMNvGFfCqe41wtSwwiDmiQHUeZVyw8iLBhE8AQT-uB1C6zLi" alt="Mesa de Milpa servida con tortillas hechas a mano en canasta, frijoles de olla, salsas en molcajete y tacos en platos de barro" class="hero-bg-img">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow"><span class="dot"></span> Cocina mexicana regional de barrio</div>
+      <h1>Comida de casa, servida todos los días.</h1>
+      <p class="lead">Maíz nixtamalizado en la propia cocina, recetas heredadas de Michoacán y Oaxaca, salsas de molcajete y una mesa comunitaria que no cierra entre semana.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#menu">Ver el menú</a>
+        <a class="btn-ghost" href="#platillos">Platillos del día</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="picado" role="presentation"></div>
+
+<!-- Sección Nuestra cocina con foto documental de la cocinera en el comal -->
+<section class="cocina-section" id="historia">
+  <div class="cocina-grid">
+    <div class="cocina-img-frame">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGX0fUZgrHkjVwQncI_IkaMlxb7dRARmzvyIYEydJrR5EMFjGrozqgP14FCJEx-Q14cuorhSzzbD0THbKJ2vKuDWOqECwvEmNEJ0JwGlCLsG4dC8VNm0A-Q76y21egHiTgL1M_ji6AFGtvru4l9v3bq3TkWxN2BFsGy9jUpzMevxR1qkW35Y-iwhpyQdsU-pEgJvJ4t8LFicaLr7AHlmNvNv7KKP0AXbX6WbqH-2ct88-awflM39iX" alt="Manos de cocinera tradicional palmeando tortilla de maíz nixtamalizado sobre un comal caliente">
+      <div class="cocina-badge">
+        <span class="icon-flame">🔥</span>
+        <div>
+          <b>El comal de barro</b>
+          <span>Se enciende a las 6:00 AM todos los días</span>
+        </div>
+      </div>
+    </div>
+    <div class="cocina-text">
+      <h2>De la milpa al comal, sin atajos ni artificios</h2>
+      <p>Milpa nació como una fonda modesta de dos mesas y un comal de barro. Hoy sigue manteniendo exactamente ese espíritu: un rincón de barrio donde se cocina con calma, moliendo el nixtamal a diario y cociendo los frijoles en olla de barro.</p>
+      <p>No hacemos cocina mexicana de gala ni versiones pretenciosas. Hacemos <strong>la comida de diario bien hecha</strong>: la que reconforta después de una jornada de trabajo, con sabor a manteca limpia, epazote fresco y chile toreado.</p>
+      <div class="stat-row">
+        <div class="stat"><b>12</b><span>años en el mismo barrio</span></div>
+        <div class="stat"><b>100%</b><span>maíz criollo nixtamalizado</span></div>
+        <div class="stat"><b>7</b><span>salsas en molcajete al día</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección Platillos Destacados con fotografías apetecibles de 45° -->
+<section class="platillos-section" id="platillos">
+  <div class="section-container">
+    <div class="section-head">
+      <div>
+        <h2>Los favoritos de la mesa</h2>
+        <p>Recetas que nunca faltan en nuestro pizarrón, preparadas en cazuelas tradicionales.</p>
+      </div>
+      <a class="btn-ghost" href="#menu">Consultar comanda completa →</a>
+    </div>
+
+    <div class="platillos-grid">
+      <!-- Tarjeta 1: Tacos al Pastor -->
+      <article class="dish-card">
+        <div class="dish-img-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiYT0oHR2lKKgCVApIgbPkcobQegjrIYtmvegbzi6hTpxDpJtX-3wzmOogHRw_7CmVa5LOpm4zJEGdanjqJE2zdtJz-XlUGKgK-Oe4d6oPKvH1XiW4zIlg_I6lTTHjoPAyyQFcXsfaF2_RROCkwHF3Z35iUvPDqEWO-Ip4aEx_s4nKSWsiMKJeRfsSvGJ9aLxpNxYetmDxSO4JzoDAAZx2aIY-MH--2qgeYhuYVvlRgp-1sVZDW8FL" alt="Tacos al pastor en tortillas hechas a mano con piña asada, cebolla y cilantro en plato de barro vidriado">
+          <span class="dish-tag">$110</span>
+        </div>
+        <div class="dish-body">
+          <div>
+            <h3>Tacos al pastor de barrio</h3>
+            <p>Trompo de cerdo adobado con achiote y chiles secos, piña asada al carbón, cebolla picada y cilantro fresco en tortilla azul y amarilla hecha al momento.</p>
+          </div>
+          <div class="dish-origin">Especialidad de comal</div>
+        </div>
+      </article>
+
+      <!-- Tarjeta 2: Mole Negro -->
+      <article class="dish-card">
+        <div class="dish-img-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKjLtwsHjIQD1N2KS5rosrfKAhqpu_PjIc4HeionwICVNLi4yl-YrnM1b3Tln0QeNzyiPMXJa5SYCnhY-KUJ62S8mQmuFh8b_Xm1DOSE1rIDj8cd3F3HaMxu1mH-18QwTcpXLlM746mICaC_DFIB4rTn5bWPIAirtWD5L7AUzrGMdzUXkQCfnuqfp8uqXTDyKl2Y-yBTnmST4rzZsULtuVbW17rAYBLLe99HZVcHUZ2EYtb4t5Zd5W" alt="Mole negro tradicional oaxaqueño sobre pollo de rancho con ajonjolí tostado y arroz rojo en vajilla artesanal">
+          <span class="dish-tag">$165</span>
+        </div>
+        <div class="dish-body">
+          <div>
+            <h3>Mole negro oaxaqueño</h3>
+            <p>Receta de tres generaciones: más de 28 ingredientes tostados lentamente, chile chilhuacle, chocolate de metate y pollo de rancho con arroz rojo rústico.</p>
+          </div>
+          <div class="dish-origin">Receta de Oaxaca</div>
+        </div>
+      </article>
+
+      <!-- Tarjeta 3: Guacamole con Totopos -->
+      <article class="dish-card">
+        <div class="dish-img-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrvnoZD-JMCwvo-hA8j1TKB2MqnEdm5n9Nxf5uHBQeejHnsnysdcWpop_UjAF4e0kTBZcipH9JTM6SxSNEDlK5CefuU2SF7Bvz8ccz3RTA3SrRkj054vgoKl0KqBFjGcKo14flW9qRAFcH1XqVACDk9b-QFqFcl1gPw3bB25ZB9H-dlKnFuwCL6TT0P9yACZVkDkOgL0aW972bg7WdalXFImRQhM_opUlKmBHr_TJkqn1OJRJaJ105" alt="Guacamole fresco en molcajete de piedra volcánica con queso cotija, chile serrano y totopos de maíz criollo">
+          <span class="dish-tag">$85</span>
+        </div>
+        <div class="dish-body">
+          <div>
+            <h3>Guacamole de molcajete</h3>
+            <p>Aguacate criollo martajado al momento en piedra volcánica con serrano, cebolla morada, cilantro, gotas de limón y queso cotija añejo con totopos recién dorados.</p>
+          </div>
+          <div class="dish-origin">Para empezar al centro</div>
+        </div>
+      </article>
+
+      <!-- Tarjeta 4: Bebidas tradicionales -->
+      <article class="dish-card">
+        <div class="dish-img-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh-2PTGxPcODKrmupLzxyD2rBL_-Hzw3q-UOG7gIUohYV7CtqK_coEanCNeR0gROF3UUMAmc9ddAR92eKXL6Oy0SytVdzkky-Kf788h4S-MPLHyFmnwFMTKcPe_Bj1rLvru-sMVhcQNjtLJKSEEXp5LAyAx9Ptf6SeeWXpznxGgUSbAM6pPV2nzo53HdQJ4AfOnnTKNCNvkPeII8IdGS7A-dmiJnu-WxtbYPu2eeWAoEFywbSYfcfT" alt="Agua fresca de jamaica natural y jarrito de barro con café de olla humeante y canela">
+          <span class="dish-tag">$35 - $50</span>
+        </div>
+        <div class="dish-body">
+          <div>
+            <h3>Bebidas de la casa & Café de olla</h3>
+            <p>Agua fresca de jamaica preparada con flor entera poco dulce, y clásico café de olla preparado en barro con piloncillo de caña y canela en raja.</p>
+          </div>
+          <div class="dish-origin">Refrescos & Infusiones</div>
+        </div>
+      </article>
+
+      <!-- Tarjeta 5: El interior acogedor -->
+      <article class="dish-card">
+        <div class="dish-img-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAflxq-GJY7q-onDMJtFWr65y5aoFpnbPLF4fFwZbfQODAbpgqfxEhR49PYhoqynp3VzHppD1yFqFFFHEu2GBUnmGLdGLuUXQEqXsnlsq1o_cV8x0-J0WAdSgAs4S53uzCRLlyew7310sUk3X5kmsWWLwlXuMvEXkePv4aO21iyKKO1HbLeLRFGcSD60oFJR60e8DTa5P78O-DoUDFbFu4yf2w4qIRhL3GqLGfYk5rrKEzvBqS0zhes" alt="Interior cálido del restaurante Milpa con mesas de madera sólida, plantas y vajilla de barro">
+          <span class="dish-tag">El comedor</span>
+        </div>
+        <div class="dish-body">
+          <div>
+            <h3>Ambiente cálido y de barrio</h3>
+            <p>Espacio sin pretensiones: mesas de madera de pino, plantas naturales y vajilla de artesanos locales. Un lugar pensado para sentirse en casa cada mediodía.</p>
+          </div>
+          <div class="dish-origin">Mesa comunitaria</div>
+        </div>
+      </article>
+
+      <!-- Tarjeta 6: La fachada -->
+      <article class="dish-card">
+        <div class="dish-img-wrap">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYlHa2FWZs2_rcRxe_Lvnp1974vAF-VmQLhZO-PtQe-FGQ70ad9PkdHVQLoDVLUkNUUwHK4uvDFhdW18OvEasORIdq5tP__I8gA4z6UzuZ0ACim7HDi9Bc4D-aHP0ThJz_02xJSULYnquDVSZtsXfsFrv7pF-HA_TkID83BleVvYtvJ5iudqpxWBrRJ6iFk487Jh7cBEjjW-AUOVn-jKFat2VmIj4kCF4-1-bEEiM3ZZfEqI-Ouce_" alt="Fachada exterior de Milpa con letrero de madera en calle colonial con plantas y adoquines">
+          <span class="dish-tag">Calle Higuera</span>
+        </div>
+        <div class="dish-body">
+          <div>
+            <h3>Nuestra casa en el barrio</h3>
+            <p>Fachada en terracota tradicional en una tranquila calle empedrada, a dos cuadras de la plaza del Carmen, junto al aroma de la panadería de la esquina.</p>
+          </div>
+          <div class="dish-origin">Barrio del Carmen</div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Menú estilo comanda tradicional -->
+<section class="menu-list-section" id="menu">
+  <div class="section-head">
+    <div>
+      <h2>El menú de la semana</h2>
+      <p>Cambia según la cosecha y la temporada del mercado local.</p>
+    </div>
+  </div>
+  <div class="menu-cols">
+    <div>
+      <div class="menu-cat">
+        <h3>Entradas y comal</h3>
+        <div class="dish-row"><span class="name">Elote callejero asado<span class="desc">Mayonesa casera, queso cotija rallado, chile piquín</span></span><span class="fill"></span><span class="price">$65</span></div>
+        <div class="dish-row"><span class="name">Tostadas de tuétano a la brasa<span class="desc">Tuétano al comal, salsa macha de chile morita, cilantro</span></span><span class="fill"></span><span class="price">$95</span></div>
+        <div class="dish-row"><span class="name">Sopa de milpa campesina<span class="desc">Granos de elote tierno, calabaza, flor fresca y epazote</span></span><span class="fill"></span><span class="price">$80</span></div>
+        <div class="dish-row"><span class="name">Quesabirria con consomé<span class="desc">Carne de res estofada en adobo, queso Oaxaca y consomé caliente</span></span><span class="fill"></span><span class="price">$130</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="menu-cat">
+        <h3>Platos fuertes y postres</h3>
+        <div class="dish-row"><span class="name">Mole negro oaxaqueño<span class="desc">Pollo de rancho, arroz rojo con plátano macho, ajonjolí</span></span><span class="fill"></span><span class="price">$165</span></div>
+        <div class="dish-row"><span class="name">Pescado a la talla en comal<span class="desc">Adobo de chiles secos, frijoles refritos y ensalada de nopal</span></span><span class="fill"></span><span class="price">$190</span></div>
+        <div class="dish-row"><span class="name">Chiles en nogada de temporada<span class="desc">Picadillo de res y cerdo con frutas, nogada de castilla</span></span><span class="fill"></span><span class="price">$175</span></div>
+        <div class="dish-row"><span class="name">Flan casero de cajeta quemada<span class="desc">Con nuez pecana tostada y leche bronca</span></span><span class="fill"></span><span class="price">$65</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección ambiente: Comedor y Barrio -->
+<section class="ambiente-section" id="ambiente">
+  <div class="ambiente-grid">
+    <div class="ambiente-card">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAflxq-GJY7q-onDMJtFWr65y5aoFpnbPLF4fFwZbfQODAbpgqfxEhR49PYhoqynp3VzHppD1yFqFFFHEu2GBUnmGLdGLuUXQEqXsnlsq1o_cV8x0-J0WAdSgAs4S53uzCRLlyew7310sUk3X5kmsWWLwlXuMvEXkePv4aO21iyKKO1HbLeLRFGcSD60oFJR60e8DTa5P78O-DoUDFbFu4yf2w4qIRhL3GqLGfYk5rrKEzvBqS0zhes" alt="Mesas de madera y comensales en el restaurante Milpa" class="ambiente-card-img">
+      <div class="ambiente-card-content">
+        <h3>Un comedor para compartir</h3>
+        <p>En Milpa no hay prisas ni códigos de etiqueta. Nos gusta que la comida llegue humeante al centro de la mesa, que los platos se compartan y que el olor a tortilla recién inflada llene cada rincón.</p>
+      </div>
+    </div>
+    <div class="ambiente-card">
+      <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYlHa2FWZs2_rcRxe_Lvnp1974vAF-VmQLhZO-PtQe-FGQ70ad9PkdHVQLoDVLUkNUUwHK4uvDFhdW18OvEasORIdq5tP__I8gA4z6UzuZ0ACim7HDi9Bc4D-aHP0ThJz_02xJSULYnquDVSZtsXfsFrv7pF-HA_TkID83BleVvYtvJ5iudqpxWBrRJ6iFk487Jh7cBEjjW-AUOVn-jKFat2VmIj4kCF4-1-bEEiM3ZZfEqI-Ouce_" alt="Fachada exterior de Milpa con letrero de madera y plantas" class="ambiente-card-img">
+      <div class="ambiente-card-content">
+        <h3>Arraigados en el barrio</h3>
+        <p>Ubicados en una casona tradicional con zaguán de madera, rodeados de macetas de barro con nopales y plantas locales. Abrimos desde el mediodía para recibir a los vecinos y viajeros con apetito de hogar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Horario y Ubicación -->
+<section class="info-section" id="info">
+  <div class="info-inner">
+    <div class="info-block">
+      <h3>Horario de atención</h3>
+      <div class="hours-row"><span>Martes a viernes</span><span>13:00 – 22:00</span></div>
+      <div class="hours-row"><span>Sábado</span><span>13:00 – 23:00</span></div>
+      <div class="hours-row"><span>Domingo</span><span>13:00 – 18:00</span></div>
+      <div class="hours-row"><span>Lunes</span><span>Cerrado por descanso</span></div>
+    </div>
+    <div class="info-block">
+      <h3>Dónde estamos</h3>
+      <address>Calle Higuera 214<br>Barrio del Carmen</address>
+      <p>A dos cuadras de la plaza principal, junto a la panadería tradicional.</p>
+    </div>
+    <div class="info-block">
+      <h3>Contacto & Reservas</h3>
+      <p>Teléfono: <strong>(55) 1234 5678</strong></p>
+      <p>Correo: contacto@milpa-restaurante.com</p>
+      <p>Instagram: @milpa.barrio</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Final -->
+<section class="cta-final" id="reservar">
+  <div class="cta-box">
+    <h2>La mesa se llena rápido entre semana.</h2>
+    <p>Reserva tu lugar para comer con calma o pasa directamente a saludar; siempre guardamos un sitio para los vecinos.</p>
+    <div class="actions">
+      <a class="btn-primary" href="tel:+525512345678">Llamar para reservar</a>
+      <a class="btn-ghost" href="mailto:contacto@milpa-restaurante.com">Escribir por correo</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="footer-inner">
+    <span>© 2026 Milpa — Cocina mexicana regional de barrio.</span>
+    <div class="footer-links">
+      <a href="#historia">Nuestra cocina</a>
+      <a href="#platillos">Platillos</a>
+      <a href="#menu">Menú</a>
+      <a href="#reservar">Reservas</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
